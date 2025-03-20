@@ -16,6 +16,7 @@ namespace MornEditor
             private readonly MornEditorNode _parentNode;
             private readonly string _originalPath;
             private readonly string _folderName;
+            private readonly List<string> _childKeys = new();
             private readonly Dictionary<string, MornEditorNode> _childNodes = new();
             private readonly List<T> _childList = new();
             private bool isRoot => _parentNode == null;
@@ -43,6 +44,8 @@ namespace MornEditor
                     {
                         childNode = new MornEditorNode(_tree, this, _originalPath + childPath + "/");
                         _childNodes[childPath] = childNode;
+                        _childKeys.Add(childPath);
+                        _childKeys.Sort();
                     }
 
                     childNode.Add(target);
@@ -50,6 +53,7 @@ namespace MornEditor
                 else
                 {
                     _childList.Add(target);
+                    _childList.Sort();
                 }
             }
 
@@ -68,9 +72,9 @@ namespace MornEditor
                     {
                         if (_isFoldout || isRoot)
                         {
-                            foreach (var sceneNode in _childNodes.Values)
+                            foreach (var childKey in _childKeys)
                             {
-                                sceneNode.OnGUI();
+                                _childNodes[childKey].OnGUI();
                             }
 
                             foreach (var child in _childList)
